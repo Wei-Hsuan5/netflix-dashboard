@@ -1,0 +1,1039 @@
+<title>Netflix Content Atlas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap">
+
+<style>
+/* ─── Tokens ─── */
+:root {
+  --bg:        #F0EEE9;
+  --surface:   #FFFFFF;
+  --surface2:  #F5F3EE;
+  --border:    #DDD9CF;
+  --text:      #0D0C14;
+  --text2:     #5A5768;
+  --text3:     #9896A4;
+  --movie:     #D42F43;
+  --show:      #2E7FDE;
+  --amber:     #D97706;
+  --grid:      rgba(0,0,0,0.06);
+  --tooltip-bg:#0D0C14;
+  --tooltip-tx:#F0EEE9;
+  --shadow:    0 2px 12px rgba(0,0,0,0.08);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:        #09090E;
+    --surface:   #13131C;
+    --surface2:  #1A1A26;
+    --border:    #252535;
+    --text:      #EEEDF4;
+    --text2:     #9896A8;
+    --text3:     #55546A;
+    --movie:     #E8364A;
+    --show:      #4A9EFF;
+    --amber:     #F59E0B;
+    --grid:      rgba(255,255,255,0.05);
+    --tooltip-bg:#EEEDF4;
+    --tooltip-tx:#0D0C14;
+    --shadow:    0 2px 20px rgba(0,0,0,0.4);
+  }
+}
+:root[data-theme="dark"] {
+  --bg:        #09090E;
+  --surface:   #13131C;
+  --surface2:  #1A1A26;
+  --border:    #252535;
+  --text:      #EEEDF4;
+  --text2:     #9896A8;
+  --text3:     #55546A;
+  --movie:     #E8364A;
+  --show:      #4A9EFF;
+  --amber:     #F59E0B;
+  --grid:      rgba(255,255,255,0.05);
+  --tooltip-bg:#EEEDF4;
+  --tooltip-tx:#0D0C14;
+  --shadow:    0 2px 20px rgba(0,0,0,0.4);
+}
+
+/* ─── Reset ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+  min-height: 100vh;
+  transition: background 0.25s, color 0.25s;
+}
+
+/* ─── Layout ─── */
+.page { max-width: 1200px; margin: 0 auto; padding: 0 24px 80px; }
+
+/* ─── Header ─── */
+.header {
+  padding: 48px 0 40px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--movie);
+  margin-bottom: 8px;
+}
+.site-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(48px, 8vw, 88px);
+  line-height: 0.92;
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+.site-subtitle {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--text2);
+  max-width: 460px;
+}
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* ─── Lang Toggle ─── */
+.lang-toggle {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.lang-btn {
+  background: transparent;
+  border: none;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  color: var(--text3);
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.15s, color 0.15s;
+}
+.lang-btn.active {
+  background: var(--text);
+  color: var(--bg);
+}
+
+/* ─── Theme Toggle ─── */
+.theme-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text2);
+  font-size: 13px;
+  padding: 7px 14px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.2s, color 0.2s;
+}
+.theme-btn:hover { background: var(--surface2); color: var(--text); }
+
+/* ─── KPI Row ─── */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 40px;
+}
+@media (max-width: 640px) { .kpi-row { grid-template-columns: repeat(2, 1fr); } }
+.kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px 20px 20px;
+  position: relative;
+  overflow: hidden;
+}
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+.kpi-card.c-movie::before  { background: var(--movie); }
+.kpi-card.c-show::before   { background: var(--show); }
+.kpi-card.c-amber::before  { background: var(--amber); }
+.kpi-card.c-neutral::before{ background: var(--text3); }
+.kpi-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 8px;
+}
+.kpi-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 52px;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.kpi-card.c-movie .kpi-value { color: var(--movie); }
+.kpi-card.c-show  .kpi-value { color: var(--show); }
+.kpi-card.c-amber .kpi-value { color: var(--amber); }
+.kpi-card.c-neutral .kpi-value { color: var(--text); }
+.kpi-sub { font-size: 12px; color: var(--text3); margin-top: 4px; }
+
+/* ─── Section ─── */
+.section { margin-top: 56px; }
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px;
+  letter-spacing: 0.04em;
+  color: var(--text);
+}
+.section-note { font-size: 12px; color: var(--text3); }
+
+/* ─── Chart Grid ─── */
+.chart-row { display: grid; gap: 16px; }
+.chart-row-2    { grid-template-columns: 2fr 1fr; }
+.chart-row-2-eq { grid-template-columns: 1fr 1fr; }
+@media (max-width: 768px) {
+  .chart-row-2, .chart-row-2-eq { grid-template-columns: 1fr; }
+}
+.chart-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+.chart-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 20px;
+}
+.chart-area { width: 100%; overflow-x: auto; }
+svg { display: block; }
+
+/* ─── Insight Box ─── */
+.insight-box {
+  margin-top: 14px;
+  padding: 15px 20px 15px 18px;
+  border-left: 2px solid var(--accent-color, var(--movie));
+  background: var(--surface2);
+  border-radius: 0 6px 6px 0;
+}
+.insight-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 10px;
+}
+.insight-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.insight-box li {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text2);
+  padding-left: 16px;
+  position: relative;
+}
+.insight-box li::before {
+  content: '↗';
+  position: absolute;
+  left: 0;
+  top: 1px;
+  font-size: 11px;
+  color: var(--accent-color, var(--movie));
+}
+.insight-box strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* ─── Legend ─── */
+.legend { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 16px; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+/* ─── Tooltip ─── */
+.chart-tooltip {
+  position: fixed;
+  background: var(--tooltip-bg);
+  color: var(--tooltip-tx);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 5px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.1s;
+  z-index: 9999;
+  white-space: nowrap;
+  max-width: 220px;
+}
+.chart-tooltip.visible { opacity: 1; }
+
+/* ─── Donut ─── */
+.donut-wrap { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+.donut-stats { display: flex; flex-direction: column; gap: 14px; }
+.donut-stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 38px; letter-spacing: 0.02em; line-height: 1; }
+.donut-stat-label { font-size: 11px; color: var(--text3); font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* ─── Ranked List ─── */
+.rank-list { display: flex; flex-direction: column; }
+.rank-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.rank-item:last-child { border-bottom: none; }
+.rank-num { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--text3); width: 28px; flex-shrink: 0; }
+.rank-name { font-size: 13px; color: var(--text); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rank-bar-wrap { width: 80px; height: 4px; background: var(--border); border-radius: 2px; flex-shrink: 0; }
+.rank-bar { height: 100%; border-radius: 2px; transition: width 0.4s ease; }
+.rank-count { font-size: 12px; font-variant-numeric: tabular-nums; color: var(--text2); width: 32px; text-align: right; flex-shrink: 0; }
+
+/* ─── Footer ─── */
+.footer {
+  margin-top: 80px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text3);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+</style>
+
+<div class="page">
+
+  <!-- ── Header ── -->
+  <header class="header">
+    <div>
+      <div class="eyebrow" data-i18n="eyebrow">Content Intelligence</div>
+      <h1 class="site-title" data-i18n-html="siteTitle">Netflix<br>Content Atlas</h1>
+      <p class="site-subtitle" data-i18n="subtitle">8,807 titles · Movies &amp; TV Shows · 123 countries · 1925–2021</p>
+    </div>
+    <div class="header-controls">
+      <div class="lang-toggle">
+        <button class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" data-lang="zh" onclick="setLang('zh')">中文</button>
+      </div>
+      <button class="theme-btn" onclick="toggleTheme()" data-i18n="themeBtn">Toggle Theme</button>
+    </div>
+  </header>
+
+  <!-- ── KPI ── -->
+  <div class="kpi-row">
+    <div class="kpi-card c-neutral">
+      <div class="kpi-label" data-i18n="kpiTotal">Total Titles</div>
+      <div class="kpi-value">8,807</div>
+      <div class="kpi-sub" data-i18n="kpiTotalSub">as of late 2021</div>
+    </div>
+    <div class="kpi-card c-movie">
+      <div class="kpi-label" data-i18n="kpiMovies">Movies</div>
+      <div class="kpi-value">6,131</div>
+      <div class="kpi-sub" data-i18n="kpiMoviesSub">69.6% of catalog</div>
+    </div>
+    <div class="kpi-card c-show">
+      <div class="kpi-label" data-i18n="kpiShows">TV Shows</div>
+      <div class="kpi-value">2,676</div>
+      <div class="kpi-sub" data-i18n="kpiShowsSub">30.4% of catalog</div>
+    </div>
+    <div class="kpi-card c-amber">
+      <div class="kpi-label" data-i18n="kpiCountries">Countries</div>
+      <div class="kpi-value">123</div>
+      <div class="kpi-sub" data-i18n="kpiCountriesSub">origins represented</div>
+    </div>
+  </div>
+
+  <!-- ── Content Growth ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title" data-i18n="s1Title">Content Growth</h2>
+      <span class="section-note" data-i18n="s1Note">Titles added to Netflix by year</span>
+    </div>
+    <div class="chart-row chart-row-2">
+      <div class="chart-card">
+        <div class="chart-title" data-i18n="growthChartTitle">Annual Additions · 2015–2021</div>
+        <div class="chart-area"><svg id="growth-chart"></svg></div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--movie)"></div><span data-i18n="legendMovies">Movies</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--show)"></div><span data-i18n="legendShows">TV Shows</span></div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title" data-i18n="donutTitle">Catalog Split</div>
+        <div class="donut-wrap">
+          <svg id="donut-chart" width="150" height="150"></svg>
+          <div class="donut-stats">
+            <div>
+              <div class="donut-stat-value" style="color:var(--movie)">69.6%</div>
+              <div class="donut-stat-label" data-i18n="legendMovies">Movies</div>
+            </div>
+            <div>
+              <div class="donut-stat-value" style="color:var(--show)">30.4%</div>
+              <div class="donut-stat-label" data-i18n="legendShows">TV Shows</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="insight-box" style="--accent-color: var(--movie)">
+      <div class="insight-label" data-i18n="insightLabel">Key Insights</div>
+      <div data-i18n-html="insightGrowth"></div>
+    </div>
+  </section>
+
+  <!-- ── Global Reach ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title" data-i18n="s2Title">Global Reach</h2>
+      <span class="section-note" data-i18n="s2Note">Top producing countries &amp; genres</span>
+    </div>
+    <div class="chart-row chart-row-2-eq">
+      <div class="chart-card">
+        <div class="chart-title" data-i18n="countryChartTitle">Top Countries by Title Count</div>
+        <div class="chart-area"><svg id="country-chart"></svg></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title" data-i18n="genreChartTitle">Top Genres</div>
+        <div class="chart-area"><svg id="genre-chart"></svg></div>
+      </div>
+    </div>
+    <div class="insight-box" style="--accent-color: var(--movie)">
+      <div class="insight-label" data-i18n="insightLabel">Key Insights</div>
+      <div data-i18n-html="insightGlobal"></div>
+    </div>
+  </section>
+
+  <!-- ── Content Profile ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title" data-i18n="s3Title">Content Profile</h2>
+      <span class="section-note" data-i18n="s3Note">Rating distribution &amp; movie runtimes</span>
+    </div>
+    <div class="chart-row chart-row-2-eq">
+      <div class="chart-card">
+        <div class="chart-title" data-i18n="ratingChartTitle">Audience Rating Distribution</div>
+        <div class="chart-area"><svg id="rating-chart"></svg></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title" data-i18n="durationChartTitle">Movie Runtime Distribution</div>
+        <div class="chart-area"><svg id="duration-chart"></svg></div>
+      </div>
+    </div>
+    <div class="insight-box" style="--accent-color: var(--amber)">
+      <div class="insight-label" data-i18n="insightLabel">Key Insights</div>
+      <div data-i18n-html="insightProfile"></div>
+    </div>
+  </section>
+
+  <!-- ── Patterns ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title" data-i18n="s4Title">Patterns</h2>
+      <span class="section-note" data-i18n="s4Note">Monthly upload rhythm &amp; TV show season counts</span>
+    </div>
+    <div class="chart-row chart-row-2-eq">
+      <div class="chart-card">
+        <div class="chart-title" data-i18n="monthlyChartTitle">Monthly Upload Pattern</div>
+        <div class="chart-area"><svg id="monthly-chart"></svg></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title" data-i18n="seasonChartTitle">TV Show · Season Count</div>
+        <div class="chart-area"><svg id="season-chart"></svg></div>
+      </div>
+    </div>
+    <div class="insight-box" style="--accent-color: var(--show)">
+      <div class="insight-label" data-i18n="insightLabel">Key Insights</div>
+      <div data-i18n-html="insightPatterns"></div>
+    </div>
+  </section>
+
+  <!-- ── Top Talent ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title" data-i18n="s5Title">Top Talent</h2>
+      <span class="section-note" data-i18n="s5Note">Most-featured directors &amp; actors across the catalog</span>
+    </div>
+    <div class="chart-row chart-row-2-eq">
+      <div class="chart-card">
+        <div class="chart-title" data-i18n="directorChartTitle">Directors · Title Count</div>
+        <div class="rank-list" id="directors-list"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title" data-i18n="actorChartTitle">Actors · Appearances</div>
+        <div class="rank-list" id="actors-list"></div>
+      </div>
+    </div>
+    <div class="insight-box" style="--accent-color: var(--show)">
+      <div class="insight-label" data-i18n="insightLabel">Key Insights</div>
+      <div data-i18n-html="insightTalent"></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <span data-i18n="footerSource">Netflix Titles Dataset · Kaggle</span>
+    <span data-i18n="footerRange">Data range: 1925–2021</span>
+  </footer>
+</div>
+
+<div class="chart-tooltip" id="tooltip"></div>
+
+<script>
+// ────────────────────────────────────────────────
+// Translations
+// ────────────────────────────────────────────────
+const TRANSLATIONS = {
+  en: {
+    eyebrow:           'Content Intelligence',
+    siteTitle:         'Netflix<br>Content Atlas',
+    subtitle:          '8,807 titles · Movies &amp; TV Shows · 123 countries · 1925–2021',
+    themeBtn:          'Toggle Theme',
+    kpiTotal:          'Total Titles',
+    kpiTotalSub:       'as of late 2021',
+    kpiMovies:         'Movies',
+    kpiMoviesSub:      '69.6% of catalog',
+    kpiShows:          'TV Shows',
+    kpiShowsSub:       '30.4% of catalog',
+    kpiCountries:      'Countries',
+    kpiCountriesSub:   'origins represented',
+    legendMovies:      'Movies',
+    legendShows:       'TV Shows',
+    insightLabel:      'Key Insights',
+    s1Title:           'Content Growth',
+    s1Note:            'Titles added to Netflix by year',
+    growthChartTitle:  'Annual Additions · 2015–2021',
+    donutTitle:        'Catalog Split',
+    s2Title:           'Global Reach',
+    s2Note:            'Top producing countries &amp; genres',
+    countryChartTitle: 'Top Countries by Title Count',
+    genreChartTitle:   'Top Genres',
+    s3Title:           'Content Profile',
+    s3Note:            'Rating distribution &amp; movie runtimes',
+    ratingChartTitle:  'Audience Rating Distribution',
+    durationChartTitle:'Movie Runtime Distribution',
+    s4Title:           'Patterns',
+    s4Note:            'Monthly upload rhythm &amp; TV show season counts',
+    monthlyChartTitle: 'Monthly Upload Pattern',
+    seasonChartTitle:  'TV Show · Season Count',
+    s5Title:           'Top Talent',
+    s5Note:            'Most-featured directors &amp; actors across the catalog',
+    directorChartTitle:'Directors · Title Count',
+    actorChartTitle:   'Actors · Appearances',
+    footerSource:      'Netflix Titles Dataset · Kaggle',
+    footerRange:       'Data range: 1925–2021',
+    tooltipTotal:      'Total',
+    tooltipTitles:     'titles',
+    insightGrowth: `<ul>
+      <li><strong>2019</strong> was Netflix's peak content year, with <strong>2,016 new titles</strong> added — a <strong>4.6×</strong> increase from 2016 (429 titles).</li>
+      <li>Movies consistently outnumbered TV Shows every year, maintaining an average <strong>2.3:1 ratio</strong> across the entire period.</li>
+      <li>The post-2019 slowdown likely reflects <strong>COVID-19</strong>'s disruption to global content production pipelines.</li>
+    </ul>`,
+    insightGlobal: `<ul>
+      <li>The <strong>United States</strong> alone contributes <strong>3,690 titles</strong> — <strong>42%</strong> of the entire Netflix catalog.</li>
+      <li><strong>India</strong> ranks 2nd with <strong>1,046 titles</strong>, reflecting Netflix's deep investment in Bollywood and regional content.</li>
+      <li>The top 3 nations (US, India, UK) collectively account for <strong>62%</strong> of all titles on the platform.</li>
+    </ul>`,
+    insightProfile: `<ul>
+      <li><strong>TV-MA</strong> leads all ratings with <strong>3,207 titles</strong> (36.4%), signaling a clear focus on adult-oriented content.</li>
+      <li>Combined mature content (TV-MA + R) accounts for <strong>45.5%</strong> of the entire catalog.</li>
+      <li>The <strong>90–120 min</strong> runtime is the sweet spot for movies, capturing <strong>49%</strong> of all film titles.</li>
+    </ul>`,
+    insightPatterns: `<ul>
+      <li><strong>July</strong> (827) and <strong>December</strong> (813) are peak upload months — timed with summer holidays and year-end viewing surges.</li>
+      <li>A striking <strong>67%</strong> of TV shows have only <strong>1 season</strong>, suggesting high cancellation rates or a preference for anthology formats.</li>
+      <li><strong>February</strong> is consistently the quietest month, with just <strong>563 titles</strong> added across the full dataset.</li>
+    </ul>`,
+    insightTalent: `<ul>
+      <li><strong>Anupam Kher</strong> leads all performers with <strong>43 Netflix appearances</strong>, underscoring India's outsized presence in the catalog.</li>
+      <li><strong>7 of the top 10</strong> most-featured actors are from India or Japan — a snapshot of the platform's international composition.</li>
+      <li><strong>Steven Spielberg</strong> is the most prominent Hollywood director on the platform with <strong>11 titles</strong>.</li>
+    </ul>`,
+  },
+
+  zh: {
+    eyebrow:           '內容分析',
+    siteTitle:         'Netflix<br>內容圖鑑',
+    subtitle:          '8,807 部作品・電影與影集・123 個國家・1925–2021',
+    themeBtn:          '切換主題',
+    kpiTotal:          '作品總數',
+    kpiTotalSub:       '截至 2021 年底',
+    kpiMovies:         '電影',
+    kpiMoviesSub:      '佔目錄 69.6%',
+    kpiShows:          '影集',
+    kpiShowsSub:       '佔目錄 30.4%',
+    kpiCountries:      '製作國家',
+    kpiCountriesSub:   '個國家來源',
+    legendMovies:      '電影',
+    legendShows:       '影集',
+    insightLabel:      '數據洞察',
+    s1Title:           '內容成長',
+    s1Note:            '各年度新增至 Netflix 的作品數',
+    growthChartTitle:  '年度新增作品・2015–2021',
+    donutTitle:        '類型佔比',
+    s2Title:           '全球版圖',
+    s2Note:            '製作數量最多的國家與類型',
+    countryChartTitle: '前 10 大製作國',
+    genreChartTitle:   '熱門類型',
+    s3Title:           '內容輪廓',
+    s3Note:            '分級分佈與電影片長',
+    ratingChartTitle:  '觀眾分級分佈',
+    durationChartTitle:'電影片長分佈',
+    s4Title:           '上架規律',
+    s4Note:            '每月上架節奏與影集季數分佈',
+    monthlyChartTitle: '每月上架量',
+    seasonChartTitle:  '影集・季數分佈',
+    s5Title:           '人才排行',
+    s5Note:            '出現次數最多的導演與演員',
+    directorChartTitle:'導演・作品數',
+    actorChartTitle:   '演員・出演次數',
+    footerSource:      'Netflix 作品資料集・Kaggle',
+    footerRange:       '資料範圍：1925–2021',
+    tooltipTotal:      '合計',
+    tooltipTitles:     '部',
+    insightGrowth: `<ul>
+      <li><strong>2019 年</strong>為 Netflix 新增內容高峰，全年上架 <strong>2,016 部</strong>作品，是 2016 年（429 部）的 <strong>4.6 倍</strong>。</li>
+      <li>電影每年皆多於影集，全目錄平均比例約為 <strong>2.3:1</strong>，顯示電影始終是主力類型。</li>
+      <li>2019 年後的成長放緩，很可能反映 <strong>COVID-19</strong> 對全球內容製作的衝擊與延期。</li>
+    </ul>`,
+    insightGlobal: `<ul>
+      <li><strong>美國</strong>單一國家貢獻了 <strong>3,690 部</strong>作品，佔 Netflix 全目錄的 <strong>42%</strong>。</li>
+      <li><strong>印度</strong>以 <strong>1,046 部</strong>位居第二，顯示 Netflix 對寶萊塢與地方語言內容的深度投資。</li>
+      <li>前三大製作國（美國、印度、英國）合計貢獻目錄中 <strong>62%</strong> 的所有作品。</li>
+    </ul>`,
+    insightProfile: `<ul>
+      <li><strong>TV-MA</strong> 以 <strong>3,207 部</strong>（36.4%）居分級之首，顯示平台以成人向內容為主力。</li>
+      <li>成熟分級內容（TV-MA + R）合計佔全目錄的 <strong>45.5%</strong>，近乎目錄半壁江山。</li>
+      <li><strong>90–120 分鐘</strong>為電影片長的黃金區間，佔所有電影的 <strong>49%</strong>。</li>
+    </ul>`,
+    insightPatterns: `<ul>
+      <li><strong>七月</strong>（827 部）與<strong>十二月</strong>（813 部）為上架高峰，呼應暑假與節慶的收視旺季。</li>
+      <li>高達 <strong>67%</strong> 的影集僅有 <strong>1 季</strong>，顯示大量影集停播，或以單季限定形式發行。</li>
+      <li><strong>二月</strong>一貫為最冷清的上架月份，整份資料集中僅有 <strong>563 部</strong>。</li>
+    </ul>`,
+    insightTalent: `<ul>
+      <li><strong>Anupam Kher</strong> 以 <strong>43 次</strong>出演高居演員榜首，再次印證印度內容在目錄中的壓倒性存在。</li>
+      <li>前 10 名演員中有 <strong>7 位</strong>來自印度或日本，簡單勾勒出目錄的高度國際化輪廓。</li>
+      <li><strong>Steven Spielberg</strong> 以 <strong>11 部</strong>作品成為平台上最具代表性的好萊塢導演。</li>
+    </ul>`,
+  }
+};
+
+// ────────────────────────────────────────────────
+// Chart Data (with bilingual labels)
+// ────────────────────────────────────────────────
+const DATA = {
+  yearly: [
+    {year:2015,movie:56,show:26},{year:2016,movie:253,show:176},
+    {year:2017,movie:839,show:349},{year:2018,movie:1237,show:412},
+    {year:2019,movie:1424,show:592},{year:2020,movie:1284,show:595},
+    {year:2021,movie:993,show:505}
+  ],
+  countries: [
+    {en:'United States',zh:'美國',count:3690},
+    {en:'India',        zh:'印度',count:1046},
+    {en:'United Kingdom',zh:'英國',count:806},
+    {en:'Canada',       zh:'加拿大',count:445},
+    {en:'France',       zh:'法國',count:393},
+    {en:'Japan',        zh:'日本',count:318},
+    {en:'Spain',        zh:'西班牙',count:232},
+    {en:'South Korea',  zh:'南韓',count:231},
+    {en:'Germany',      zh:'德國',count:226},
+    {en:'Mexico',       zh:'墨西哥',count:169}
+  ],
+  genres: [
+    {en:'International Movies', zh:'國際電影',   count:2752},
+    {en:'Dramas',               zh:'戲劇',       count:2427},
+    {en:'Comedies',             zh:'喜劇',       count:1674},
+    {en:'International TV Shows',zh:'國際影集',  count:1351},
+    {en:'Documentaries',        zh:'紀錄片',     count:869},
+    {en:'Action & Adventure',   zh:'動作冒險',   count:859},
+    {en:'TV Dramas',            zh:'電視劇',     count:763},
+    {en:'Indie Movies',         zh:'獨立電影',   count:756},
+    {en:'Family Movies',        zh:'家庭電影',   count:641},
+    {en:'Romantic Movies',      zh:'愛情電影',   count:616}
+  ],
+  ratings: [
+    {label:'TV-MA',count:3207},{label:'TV-14',count:2160},
+    {label:'TV-PG',count:863},{label:'R',count:799},
+    {label:'PG-13',count:490},{label:'TV-Y7',count:334},
+    {label:'TV-Y',count:307},{label:'PG',count:287},
+    {label:'TV-G',count:220}
+  ],
+  duration: [
+    {en:'<60 min',    zh:'60分以下',  count:487},
+    {en:'60–90 min',  zh:'60–90分',   count:1503},
+    {en:'90–120 min', zh:'90–120分',  count:2996},
+    {en:'120–150 min',zh:'120–150分', count:897},
+    {en:'>150 min',   zh:'150分以上', count:245}
+  ],
+  monthly: [
+    {month:'Jan',count:738},{month:'Feb',count:563},{month:'Mar',count:742},
+    {month:'Apr',count:764},{month:'May',count:632},{month:'Jun',count:728},
+    {month:'Jul',count:827},{month:'Aug',count:755},{month:'Sep',count:770},
+    {month:'Oct',count:760},{month:'Nov',count:705},{month:'Dec',count:813}
+  ],
+  seasons: [
+    {en:'1 Season', zh:'1 季',count:1793},
+    {en:'2 Seasons',zh:'2 季',count:425},
+    {en:'3 Seasons',zh:'3 季',count:199},
+    {en:'4 Seasons',zh:'4 季',count:95},
+    {en:'5 Seasons',zh:'5 季',count:65},
+    {en:'6 Seasons',zh:'6 季',count:33}
+  ],
+  directors: [
+    {name:'Rajiv Chilaka',count:19},{name:'Raúl Campos / Jan Suter',count:18},
+    {name:'Suhas Kadav',count:16},{name:'Marcus Raboy',count:15},
+    {name:'Jay Karas',count:14},{name:'Cathy Garcia-Molina',count:13},
+    {name:'Martin Scorsese',count:12},{name:'Youssef Chahine',count:12},
+    {name:'Jay Chapman',count:12},{name:'Steven Spielberg',count:11}
+  ],
+  actors: [
+    {name:'Anupam Kher',count:43},{name:'Shah Rukh Khan',count:35},
+    {name:'Julie Tejwani',count:33},{name:'Naseeruddin Shah',count:32},
+    {name:'Takahiro Sakurai',count:32},{name:'Rupa Bhimani',count:31},
+    {name:'Akshay Kumar',count:30},{name:'Om Puri',count:30},
+    {name:'Yuki Kaji',count:29},{name:'Amitabh Bachchan',count:28}
+  ]
+};
+
+// ────────────────────────────────────────────────
+// State & i18n
+// ────────────────────────────────────────────────
+let LANG = 'en';
+
+function setLang(lang) {
+  LANG = lang;
+  const T = TRANSLATIONS[lang];
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (T[key] !== undefined) el.textContent = T[key];
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const key = el.dataset.i18nHtml;
+    if (T[key] !== undefined) el.innerHTML = T[key];
+  });
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+
+  requestAnimationFrame(() => requestAnimationFrame(drawAll));
+}
+
+// ────────────────────────────────────────────────
+// Tooltip
+// ────────────────────────────────────────────────
+const tooltip = document.getElementById('tooltip');
+function showTip(e, html) {
+  tooltip.innerHTML = html;
+  tooltip.classList.add('visible');
+  moveTip(e);
+}
+function moveTip(e) {
+  const x = e.clientX + 14;
+  const y = e.clientY - 40;
+  tooltip.style.left = Math.min(x, window.innerWidth - 230) + 'px';
+  tooltip.style.top  = Math.max(y, 8) + 'px';
+}
+function hideTip() { tooltip.classList.remove('visible'); }
+window.addEventListener('mousemove', e => {
+  if (tooltip.classList.contains('visible')) moveTip(e);
+});
+
+// ────────────────────────────────────────────────
+// SVG helpers
+// ────────────────────────────────────────────────
+const SVG_NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs) {
+  const e = document.createElementNS(SVG_NS, tag);
+  for (const [k,v] of Object.entries(attrs)) e.setAttribute(k, v);
+  return e;
+}
+function getVar(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+function fmt(n) { return Number(n).toLocaleString(); }
+
+function setSVGSize(id, w, h) {
+  const s = document.getElementById(id);
+  s.setAttribute('width', w);
+  s.setAttribute('height', h);
+  s.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  s.innerHTML = '';
+  return s;
+}
+
+// ────────────────────────────────────────────────
+// Chart: Stacked Bar (Growth)
+// ────────────────────────────────────────────────
+function drawGrowth() {
+  const W = 520, H = 240;
+  const pad = {t:20, r:20, b:36, l:50};
+  const svg = setSVGSize('growth-chart', W, H);
+  const iW = W - pad.l - pad.r, iH = H - pad.t - pad.b;
+  const years = DATA.yearly;
+  const maxVal = Math.max(...years.map(d => d.movie + d.show));
+  const barW = (iW / years.length) * 0.58;
+  const gap  = iW / years.length;
+  const cM = getVar('--movie'), cS = getVar('--show');
+  const cG = getVar('--grid'), cT3 = getVar('--text3');
+  const T = TRANSLATIONS[LANG];
+
+  [0,500,1000,1500,2000].forEach(v => {
+    if (v > maxVal) return;
+    const y = pad.t + iH - (v / maxVal * iH);
+    svg.appendChild(el('line',{x1:pad.l,x2:pad.l+iW,y1:y,y2:y,stroke:cG,'stroke-width':1}));
+    if (v > 0) {
+      const t = el('text',{x:pad.l-6,y:y+4,'text-anchor':'end','font-size':10,fill:cT3,'font-family':'DM Sans,sans-serif'});
+      t.textContent = v >= 1000 ? (v/1000).toFixed(1)+'k' : v;
+      svg.appendChild(t);
+    }
+  });
+
+  years.forEach((d, i) => {
+    const x = pad.l + i * gap + (gap - barW) / 2;
+    const showH  = (d.show  / maxVal) * iH;
+    const movieH = (d.movie / maxVal) * iH;
+    const totalH = showH + movieH;
+
+    const bM = el('rect',{x,width:barW,y:pad.t+iH-movieH,height:movieH,fill:cM,rx:2});
+    bM.style.cursor = 'pointer';
+    const bS = el('rect',{x,width:barW,y:pad.t+iH-totalH,height:Math.max(showH-2,0),fill:cS,rx:2});
+    bS.style.cursor = 'pointer';
+
+    const tip = `<strong>${d.year}</strong><br>${T.legendMovies}: ${fmt(d.movie)}<br>${T.legendShows}: ${fmt(d.show)}<br>${T.tooltipTotal}: ${fmt(d.movie+d.show)} ${T.tooltipTitles}`;
+    [bM,bS].forEach(b => {
+      b.addEventListener('mousemove', e => showTip(e, tip));
+      b.addEventListener('mouseleave', hideTip);
+    });
+    bM.addEventListener('mouseenter', () => bM.setAttribute('opacity','0.8'));
+    bM.addEventListener('mouseleave', () => bM.setAttribute('opacity','1'));
+    bS.addEventListener('mouseenter', () => bS.setAttribute('opacity','0.8'));
+    bS.addEventListener('mouseleave', () => bS.setAttribute('opacity','1'));
+
+    svg.appendChild(bM);
+    svg.appendChild(bS);
+
+    const lbl = el('text',{x:x+barW/2,y:H-pad.b+16,'text-anchor':'middle','font-size':11,fill:cT3,'font-family':'DM Sans,sans-serif'});
+    lbl.textContent = d.year;
+    svg.appendChild(lbl);
+  });
+}
+
+// ────────────────────────────────────────────────
+// Chart: Donut
+// ────────────────────────────────────────────────
+function drawDonut() {
+  const svg = document.getElementById('donut-chart');
+  svg.innerHTML = '';
+  const cx=75, cy=75, r=60, thick=20;
+  const cM = getVar('--movie'), cS = getVar('--show'), cBg = getVar('--surface2');
+  const frac = 6131/8807;
+  const τ = Math.PI*2;
+
+  function arc(s0,s1,color) {
+    const s = s0*τ - Math.PI/2, e = s1*τ - Math.PI/2;
+    const r2 = r-thick;
+    const lf = (s1-s0) > 0.5 ? 1 : 0;
+    const x1=cx+r*Math.cos(s), y1=cy+r*Math.sin(s);
+    const x2=cx+r*Math.cos(e), y2=cy+r*Math.sin(e);
+    const x3=cx+r2*Math.cos(e),y3=cy+r2*Math.sin(e);
+    const x4=cx+r2*Math.cos(s),y4=cy+r2*Math.sin(s);
+    const d=`M${x1},${y1} A${r},${r},0,${lf},1,${x2},${y2} L${x3},${y3} A${r2},${r2},0,${lf},0,${x4},${y4} Z`;
+    svg.appendChild(el('path',{d,fill:color}));
+  }
+
+  const bg = el('circle',{cx,cy,r:r-thick/2,fill:'none',stroke:cBg,'stroke-width':thick});
+  svg.appendChild(bg);
+  arc(0, frac, cM);
+  arc(frac+0.006, 1, cS);
+}
+
+// ────────────────────────────────────────────────
+// Chart: Horizontal Bars
+// ────────────────────────────────────────────────
+function drawHBar(svgId, data, color, labelW) {
+  const itemH = 30, W = 480;
+  const pad = {t:4, r:56, b:4, l: labelW || 128};
+  const H = data.length * itemH + pad.t + pad.b;
+  const svg = setSVGSize(svgId, W, H);
+  const iW = W - pad.l - pad.r;
+  const max = Math.max(...data.map(d => d.count));
+  const cT = getVar('--text'), cT3 = getVar('--text3'), cBrd = getVar('--border');
+
+  data.forEach((d, i) => {
+    const y  = pad.t + i * itemH;
+    const lbl = LANG === 'zh' ? (d.zh || d.en || d.label || d.month)
+                              : (d.en || d.label || d.month);
+    const bW = (d.count / max) * iW;
+
+    const bg = el('rect',{x:0,y:y+2,width:W,height:itemH-4,fill:'transparent',rx:3});
+    bg.style.cursor='default';
+    bg.addEventListener('mousemove',e=>showTip(e,`<strong>${lbl}</strong>: ${fmt(d.count)}`));
+    bg.addEventListener('mouseleave',hideTip);
+    svg.appendChild(bg);
+
+    svg.appendChild(el('rect',{x:pad.l,y:y+itemH/2-5,width:iW,height:10,fill:cBrd,rx:3}));
+
+    const bar = el('rect',{x:pad.l,y:y+itemH/2-5,width:Math.max(bW,3),height:10,fill:color,rx:3});
+    svg.appendChild(bar);
+    bg.addEventListener('mouseenter',()=>bar.setAttribute('opacity','0.75'));
+    bg.addEventListener('mouseleave',()=>bar.setAttribute('opacity','1'));
+
+    const lt = el('text',{x:pad.l-8,y:y+itemH/2+4,'text-anchor':'end','font-size':11.5,fill:cT,'font-family':'DM Sans,sans-serif'});
+    lt.textContent = lbl;
+    svg.appendChild(lt);
+
+    const ct = el('text',{x:pad.l+iW+8,y:y+itemH/2+4,'text-anchor':'start','font-size':11,fill:cT3,'font-family':'DM Sans,sans-serif','font-variant-numeric':'tabular-nums'});
+    ct.textContent = fmt(d.count);
+    svg.appendChild(ct);
+  });
+}
+
+// ────────────────────────────────────────────────
+// Chart: Vertical Bars
+// ────────────────────────────────────────────────
+function drawVBar(svgId, data, color, rotateLbl) {
+  const W = 480, H = 220;
+  const pad = {t:20, r:16, b: rotateLbl ? 56 : 40, l:50};
+  const svg = setSVGSize(svgId, W, H);
+  const iW = W-pad.l-pad.r, iH = H-pad.t-pad.b;
+  const max = Math.max(...data.map(d=>d.count));
+  const bW = (iW/data.length)*0.62;
+  const gap = iW/data.length;
+  const cG=getVar('--grid'), cT3=getVar('--text3'), cBrd=getVar('--border');
+
+  [0.25,0.5,0.75,1].forEach(f => {
+    const y = pad.t + iH*(1-f);
+    svg.appendChild(el('line',{x1:pad.l,x2:pad.l+iW,y1:y,y2:y,stroke:cG,'stroke-width':1}));
+    const v = Math.round(max*f);
+    const t = el('text',{x:pad.l-6,y:y+4,'text-anchor':'end','font-size':10,fill:cT3,'font-family':'DM Sans,sans-serif'});
+    t.textContent = v>=1000 ? (v/1000).toFixed(1)+'k' : v;
+    svg.appendChild(t);
+  });
+
+  data.forEach((d,i) => {
+    const bH = (d.count/max)*iH;
+    const x = pad.l + i*gap + (gap-bW)/2;
+    const y = pad.t + iH - bH;
+    const lbl = LANG==='zh' ? (d.zh||d.en||d.label||d.month)
+                            : (d.en||d.label||d.month);
+
+    const rect = el('rect',{x,y,width:bW,height:bH,fill:color,rx:3});
+    rect.style.cursor='pointer';
+    rect.addEventListener('mousemove',e=>showTip(e,`<strong>${lbl}</strong><br>${fmt(d.count)}`));
+    rect.addEventListener('mouseleave',hideTip);
+    rect.addEventListener('mouseenter',()=>rect.setAttribute('opacity','0.75'));
+    rect.addEventListener('mouseleave',()=>rect.setAttribute('opacity','1'));
+    svg.appendChild(rect);
+
+    const lt = el('text',{
+      x: x+bW/2, y: H-pad.b+14,
+      'text-anchor': rotateLbl ? 'end' : 'middle',
+      'font-size': 10.5, fill: cT3,
+      'font-family': 'DM Sans,sans-serif',
+      transform: rotateLbl ? `rotate(-38,${x+bW/2},${H-pad.b+14})` : ''
+    });
+    lt.textContent = lbl;
+    svg.appendChild(lt);
+  });
+}
+
+// ────────────────────────────────────────────────
+// Ranked List
+// ────────────────────────────────────────────────
+function buildList(id, data, color) {
+  const el = document.getElementById(id);
+  const max = data[0].count;
+  el.innerHTML = data.map((d,i) => `
+    <div class="rank-item">
+      <span class="rank-num">${String(i+1).padStart(2,'0')}</span>
+      <span class="rank-name" title="${d.name}">${d.name}</span>
+      <div class="rank-bar-wrap">
+        <div class="rank-bar" style="width:${(d.count/max*100).toFixed(1)}%;background:${color}"></div>
+      </div>
+      <span class="rank-count">${d.count}</span>
+    </div>
+  `).join('');
+}
+
+// ────────────────────────────────────────────────
+// Draw All
+// ────────────────────────────────────────────────
+function drawAll() {
+  const cM = getVar('--movie'), cS = getVar('--show'), cA = getVar('--amber');
+  drawGrowth();
+  drawDonut();
+  drawHBar('country-chart', DATA.countries, cM, 120);
+  drawHBar('genre-chart',   DATA.genres,    cS, 130);
+  drawVBar('rating-chart',  DATA.ratings,   cM, false);
+  drawVBar('duration-chart',DATA.duration,  cA, true);
+  drawVBar('monthly-chart', DATA.monthly,   cS, false);
+  drawVBar('season-chart',  DATA.seasons,   cA, true);
+  buildList('directors-list', DATA.directors, cM);
+  buildList('actors-list',    DATA.actors,    cS);
+}
+
+// ────────────────────────────────────────────────
+// Theme Toggle
+// ────────────────────────────────────────────────
+function toggleTheme() {
+  const root = document.documentElement;
+  const cur = root.getAttribute('data-theme');
+  if (!cur) {
+    const pref = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    root.setAttribute('data-theme', pref ? 'light' : 'dark');
+  } else {
+    root.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+  }
+  requestAnimationFrame(() => requestAnimationFrame(drawAll));
+}
+
+// ────────────────────────────────────────────────
+// Init
+// ────────────────────────────────────────────────
+// Apply initial i18n (EN default) then draw
+setLang('en');
+
+window.addEventListener('resize', () => {
+  clearTimeout(window._rt);
+  window._rt = setTimeout(drawAll, 150);
+});
+</script>
